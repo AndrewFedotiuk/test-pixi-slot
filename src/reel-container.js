@@ -1,19 +1,23 @@
-import { Graphics, filters, Container, Sprite } from 'pixi.js'
-import { gsap } from 'gsap';
+import { Graphics, filters, Container, Sprite } from 'pixi.js';
+import { backout, lerp } from './utils';
 
 export default class ReelContainer {
-	constructor(addToStage, sprites, renderer) {
+	constructor(addToStage, sprites, renderer, ticker) {
 		this.sprites = sprites;
 		this.renderer = renderer;
 		this.addToStage = addToStage;
+		this.ticker = ticker;
 		this.REEL_WIDTH = 250;
 		this.SYMBOL_SIZE = 220;
 		this.LINE_COUNT = 3;
 		this.reelContainer = new Container();
 		this.reels = [];
+		this.tweening = [];
 
 		this.createReels();
 		this.createMargins();
+		this.animationUpdate();
+		this.animateTweening();
 
 		addToStage(this.reelContainer);
 	}
@@ -35,10 +39,9 @@ export default class ReelContainer {
 			reel.blur.blurY = 0;
 			reelWrapper.filters = [reel.blur];
 
-			// Build the symbols
-			for (let j = 0; j < 8; j++) {
+			for (let j = 0; j < 5; j++) {
 				const symbol = new Sprite(this.sprites[Math.floor(Math.random() * this.sprites.length)]);
-				// Scale the symbol to fit symbol area.
+
 				symbol.y = j * this.SYMBOL_SIZE;
 				symbol.scale.x = symbol.scale.y = Math.min(this.SYMBOL_SIZE / symbol.width, this.SYMBOL_SIZE / symbol.height);
 				symbol.x = Math.round((this.SYMBOL_SIZE - symbol.width) / 2);
@@ -64,12 +67,73 @@ export default class ReelContainer {
 		this.addToStage(bottom);
 	}
 
-	startPlay() {
+	startPlay(reelsComplete) {
 		this.reels.forEach((reel, index) => {
 			const extra = Math.floor(Math.random() * 3);
-			const target = reel.container.y - (index + 1) * this.SYMBOL_SIZE * 3;
-			const time = 250 + index * 600 + extra * 600;
-			gsap.to(reel.container, { y: target, duration: time/1000 });
+			const target = reel.position + 10 + index * 5 + extra;
+			const time = 2500 + index * 600 + extra * 600;
+
+			this.tweenTo(reel, 'position', target, time, backout(0.5), null, index === this.reels.length - 1 ? reelsComplete : null);
 		})
+	}
+
+	tweenTo(object, property, target, time, easing, onchange, oncomplete) {
+		const tween = {
+			object,
+			property,
+			propertyBeginValue: object[property],
+			target,
+			easing,
+			time,
+			change: onchange,
+			complete: oncomplete,
+			start: Date.now(),
+		};
+
+		this.tweening.push(tween);
+		return tween;
+	}
+
+	animationUpdate() {
+		this.ticker.add(() => {
+			this.reels.forEach(reel => {
+				reel.blur.blurY = (reel.position - reel.previousPosition) * 8;
+				reel.previousPosition = reel.position;
+				reel.symbols.forEach((symbol, index) => {
+					const prevY = symbol.y;
+					symbol.y = ((reel.position + index) % reel.symbols.length) * this.SYMBOL_SIZE - this.SYMBOL_SIZE;
+					if (symbol.y < 0 && prevY > this.SYMBOL_SIZE) {
+						symbol.texture = this.sprites[Math.floor(Math.random() * this.sprites.length)];
+						symbol.scale.x = symbol.scale.y = Math.min(this.SYMBOL_SIZE / symbol.texture.width, this.SYMBOL_SIZE / symbol.texture.height);
+						symbol.x = Math.round((this.SYMBOL_SIZE - symbol.width) / 2);
+					}
+				})
+			})
+		});
+	}
+
+	animateTweening() {
+		this.ticker.add(() => {
+			const now = Date.now();
+			const remove = [];
+
+			this.tweening.forEach(tween => {
+				const phase = Math.min(1, (now - tween.start) / tween.time);
+
+				tween.object[tween.property] = lerp(tween.propertyBeginValue, tween.target, tween.easing(phase));
+				if (tween.change) tween.change(tween);
+
+				if (phase === 1) {
+					tween.object[tween.property] = tween.target;
+					if (tween.complete) tween.complete(tween);
+					remove.push(tween);
+				}
+			})
+
+			remove.forEach((_, index) => {
+				this.tweening.splice(this.tweening.indexOf(remove[index]), 1);
+			})
+		});
+
 	}
 }

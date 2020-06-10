@@ -26,13 +26,17 @@ export default class App extends Controller {
 	}
 
 	startPlay(){
-		// if (this.running) return;
-		// this.running = true;
+		if (this.running) return;
+		this.running = true;
 
-		this.reelsWrapper.startPlay();
+		this.reelsWrapper.startPlay(this.reelsComplete.bind(this));
+	}
+
+	reelsComplete(){
+		this.running = false;
 	}
 
 	createReels() {
-		this.reelsWrapper = new ReelContainer(this.stageAdd.bind(this), this.loader.sprites, this.renderer);
+		this.reelsWrapper = new ReelContainer(this.stageAdd.bind(this), this.loader.sprites, this.renderer, this.ticker);
 	}
 }
