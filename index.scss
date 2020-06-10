@@ -5,4 +5,12 @@ body{
 	.app{
 		min-width: 660px;
 	}
+
+	.spin-button{
+		position: fixed;
+		bottom: 10%;
+		font-size: 35px;
+		left: 50%;
+		transform: translate(-50%);
+	}
 }

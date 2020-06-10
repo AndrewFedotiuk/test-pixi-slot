@@ -1,11 +1,11 @@
-import {Graphics, filters, Container, Sprite} from 'pixi.js'
+import { Graphics, filters, Container, Sprite } from 'pixi.js'
+import { gsap } from 'gsap';
 
 export default class ReelContainer {
 	constructor(addToStage, sprites, renderer) {
 		this.sprites = sprites;
 		this.renderer = renderer;
 		this.addToStage = addToStage;
-		this.reels = [];
 		this.REEL_WIDTH = 250;
 		this.SYMBOL_SIZE = 220;
 		this.LINE_COUNT = 3;
@@ -18,7 +18,7 @@ export default class ReelContainer {
 		addToStage(this.reelContainer);
 	}
 
-	createReels(){
+	createReels() {
 		for (let i = 0; i < this.LINE_COUNT; i++) {
 			const reelWrapper = new Container();
 			reelWrapper.x = i * this.REEL_WIDTH;
@@ -49,11 +49,11 @@ export default class ReelContainer {
 		}
 	}
 
-	createMargins(){
+	createMargins() {
 		const margin = (this.renderer.screen.height - this.SYMBOL_SIZE * 3);
 
 		this.reelContainer.y = 10;
-		this.reelContainer.x = 10;
+		this.reelContainer.x = Math.round(this.renderer.screen.width / 2 - (this.REEL_WIDTH * 3) / 2);
 
 		const bottom = new Graphics();
 		bottom.zIndex = 2;
@@ -62,5 +62,14 @@ export default class ReelContainer {
 		bottom.drawRect(0, this.SYMBOL_SIZE * 3, this.renderer.screen.width, margin);
 
 		this.addToStage(bottom);
+	}
+
+	startPlay() {
+		this.reels.forEach((reel, index) => {
+			const extra = Math.floor(Math.random() * 3);
+			const target = reel.container.y - (index + 1) * this.SYMBOL_SIZE * 3;
+			const time = 250 + index * 600 + extra * 600;
+			gsap.to(reel.container, { y: target, duration: time/1000 });
+		})
 	}
 }

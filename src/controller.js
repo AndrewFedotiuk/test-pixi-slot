@@ -1,13 +1,19 @@
-import { Container, autoDetectRenderer } from 'pixi.js'
+import { Container, Ticker, autoDetectRenderer, UPDATE_PRIORITY } from 'pixi.js'
 
 
 export default class Controller {
 	constructor() {
 		this.width = null;
 		this.height = null;
-		this.stopCount = 0;
+		this.running = false;
 		this.stage = new Container();
+		this.ticker = new Ticker();
 		this.stage.sortableChildren = true;
+
+		this.ticker.add(
+			this.render.bind(this),
+			UPDATE_PRIORITY.LOW
+		)
 	}
 
 	createRenderer() {
@@ -24,5 +30,10 @@ export default class Controller {
 	stageAdd(item) {
 		this.stage.addChild(item);
 		this.renderer.render(this.stage);
+	}
+
+	render() {
+		this.renderer.render(this.stage)
+		// console.log(this.joy.directionData);
 	}
 }

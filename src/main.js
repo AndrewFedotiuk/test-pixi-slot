@@ -1,8 +1,9 @@
 import Controller from './controller';
 import ImageLoader from './loader';
 import ReelContainer from './reel-container';
+import { gsap } from "gsap";
 
-export default class App extends Controller{
+export default class App extends Controller {
 	constructor() {
 		super();
 		this.width = window.innerWidth;
@@ -12,12 +13,26 @@ export default class App extends Controller{
 		this.loader = new ImageLoader(this.init.bind(this));
 	}
 
-	init(){
+	init() {
 		console.log(this.loader);
 		this.createReels();
+		this.addEvents();
+		this.ticker.start();
 	}
 
-	createReels(){
-		this.reels = new ReelContainer(this.stageAdd.bind(this), this.loader.sprites, this.renderer);
+	addEvents() {
+		const spinButton = document.getElementById('spinBtn');
+		spinButton.addEventListener('click', () => this.startPlay());
+	}
+
+	startPlay(){
+		// if (this.running) return;
+		// this.running = true;
+
+		this.reelsWrapper.startPlay();
+	}
+
+	createReels() {
+		this.reelsWrapper = new ReelContainer(this.stageAdd.bind(this), this.loader.sprites, this.renderer);
 	}
 }
