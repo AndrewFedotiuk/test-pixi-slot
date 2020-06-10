@@ -1,7 +1,6 @@
 import Controller from './controller';
 import ImageLoader from './loader';
 import ReelContainer from './reel-container';
-import { gsap } from "gsap";
 
 export default class App extends Controller {
 	constructor() {
@@ -14,7 +13,6 @@ export default class App extends Controller {
 	}
 
 	init() {
-		console.log(this.loader);
 		this.createReels();
 		this.addEvents();
 		this.ticker.start();
@@ -37,6 +35,11 @@ export default class App extends Controller {
 	}
 
 	createReels() {
-		this.reelsWrapper = new ReelContainer(this.stageAdd.bind(this), this.loader.sprites, this.renderer, this.ticker);
+		this.reelsWrapper = new ReelContainer(
+			this.stageAdd.bind(this),
+			this.loader.sprites,
+			this.renderer,
+			this.ticker
+		);
 	}
 }

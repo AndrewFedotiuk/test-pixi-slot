@@ -33,7 +33,6 @@ export default class Controller {
 	}
 
 	render() {
-		this.renderer.render(this.stage)
-		// console.log(this.joy.directionData);
+		this.renderer.render(this.stage);
 	}
 }

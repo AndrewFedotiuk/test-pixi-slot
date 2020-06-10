@@ -1,5 +1,5 @@
 import { Graphics, filters, Container, Sprite } from 'pixi.js';
-import { backout, lerp } from './utils';
+import { backout, lerp, tweenTo } from './utils';
 
 export default class ReelContainer {
 	constructor(addToStage, sprites, renderer, ticker) {
@@ -39,7 +39,7 @@ export default class ReelContainer {
 			reel.blur.blurY = 0;
 			reelWrapper.filters = [reel.blur];
 
-			for (let j = 0; j < 5; j++) {
+			for (let j = 0; j < 7; j++) {
 				const symbol = new Sprite(this.sprites[Math.floor(Math.random() * this.sprites.length)]);
 
 				symbol.y = j * this.SYMBOL_SIZE;
@@ -71,27 +71,20 @@ export default class ReelContainer {
 		this.reels.forEach((reel, index) => {
 			const extra = Math.floor(Math.random() * 3);
 			const target = reel.position + 10 + index * 5 + extra;
-			const time = 2500 + index * 600 + extra * 600;
+			const time = 250 + index * 600 + extra * 600;
 
-			this.tweenTo(reel, 'position', target, time, backout(0.5), null, index === this.reels.length - 1 ? reelsComplete : null);
+			const tween = tweenTo(
+				reel,
+				'position',
+				target,
+				time,
+				backout(0.5),
+				null,
+				index === this.reels.length - 1 ? reelsComplete : null
+			);
+
+			this.tweening.push(tween);
 		})
-	}
-
-	tweenTo(object, property, target, time, easing, onchange, oncomplete) {
-		const tween = {
-			object,
-			property,
-			propertyBeginValue: object[property],
-			target,
-			easing,
-			time,
-			change: onchange,
-			complete: oncomplete,
-			start: Date.now(),
-		};
-
-		this.tweening.push(tween);
-		return tween;
 	}
 
 	animationUpdate() {
@@ -134,6 +127,5 @@ export default class ReelContainer {
 				this.tweening.splice(this.tweening.indexOf(remove[index]), 1);
 			})
 		});
-
 	}
 }
