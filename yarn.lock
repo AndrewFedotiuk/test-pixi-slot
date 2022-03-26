@@ -751,11 +751,6 @@ glob-parent@~5.1.0:
   dependencies:
     is-glob "^4.0.1"
 
-gsap@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.3.1.tgz#f11b926c2c1891501209d78a00df48452a2681c8"
-  integrity sha512-jTR6bZKCkB9toO/8Mq2FWIMKjoOgOWjGAeO9SJHTGk0UnGn3C7ViN9QeNzY7Za1QmQ6NWG+ud6MB4e4L23qWMg==
-
 has-flag@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-3.0.0.tgz#b5d454dc2199ae225699f3467e5a07f3b955bafd"
@@ -955,9 +950,9 @@ mini-signals@^1.2.0:
   integrity sha1-RbCAE8X65RokqhqTXNMXye1yHXQ=
 
 minimist@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
-  integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
+  integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
 mkdirp@~0.5.1:
   version "0.5.5"
